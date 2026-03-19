@@ -178,31 +178,6 @@ curl -X DELETE http://localhost:5000/api/v1/tables/users/rows/user:001
 
 ---
 
-## Screenshots
-
-### HDFS NameNode Dashboard
-*[Screenshot placeholder — localhost:9870]*
-
-### HDFS Datanodes (2 nodes)
-*[Screenshot placeholder — localhost:9870 Datanodes tab]*
-
-### HBase Master Dashboard
-*[Screenshot placeholder — localhost:16010]*
-
-### HBase Region Servers (2 servers)
-*[Screenshot placeholder — localhost:16010 Region Servers tab]*
-
-### YARN Dashboard
-*[Screenshot placeholder — localhost:8088]*
-
-### REST API Health Check
-*[Screenshot placeholder — curl health]*
-
-### All 8 Containers Running
-*[Screenshot placeholder — Docker Desktop]*
-
----
-
 ## Stopping the Cluster
 
 ```bash
