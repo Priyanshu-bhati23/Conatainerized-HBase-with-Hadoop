@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <n>yarn.resourcemanager.hostname</n>
+    <value>namenode</value>
+  </property>
+  <property>
+    <n>yarn.resourcemanager.address</n>
+    <value>namenode:8032</value>
+  </property>
+  <property>
+    <n>yarn.resourcemanager.scheduler.address</n>
+    <value>namenode:8030</value>
+  </property>
+  <property>
+    <n>yarn.resourcemanager.resource-tracker.address</n>
+    <value>namenode:8031</value>
+  </property>
+  <property>
+    <n>yarn.nodemanager.aux-services</n>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <n>yarn.nodemanager.aux-services.mapreduce.shuffle.class</n>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <property>
+    <n>yarn.nodemanager.resource.memory-mb</n>
+    <value>4096</value>
+  </property>
+  <property>
+    <n>yarn.scheduler.maximum-allocation-mb</n>
+    <value>4096</value>
+  </property>
+</configuration>

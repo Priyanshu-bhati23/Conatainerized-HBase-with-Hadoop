@@ -1,0 +1,68 @@
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Data volumes (never commit HBase/HDFS data)
+hadoop/dfs/
+hbase/data/
+data/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-log.txt
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IDE
+.idea/
+*.iml
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+*.out
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Kubernetes secrets
+kubernetes/secrets/
+
+# Test outputs
+test-results/
+junit.xml
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.tar.gz
+*.zip

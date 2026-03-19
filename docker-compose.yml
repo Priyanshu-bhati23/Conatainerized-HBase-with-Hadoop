@@ -1,0 +1,177 @@
+version: '3.8'
+
+networks:
+  hadoop-net:
+    driver: bridge
+
+volumes:
+  namenode-data:
+  datanode1-data:
+  datanode2-data:
+  zookeeper-data:
+  hbase-data:
+
+services:
+
+  zookeeper:
+    image: zookeeper:3.8.1
+    container_name: zookeeper
+    hostname: zookeeper
+    networks:
+      - hadoop-net
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/data
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  namenode:
+    build:
+      context: ./docker/hadoop
+      dockerfile: Dockerfile
+    container_name: namenode
+    hostname: namenode
+    networks:
+      - hadoop-net
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+      - "8088:8088"
+    volumes:
+      - namenode-data:/hadoop/dfs/name
+    environment:
+      HADOOP_ROLE: namenode
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9870"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+
+  datanode1:
+    build:
+      context: ./docker/hadoop
+      dockerfile: Dockerfile
+    container_name: datanode1
+    hostname: datanode1
+    networks:
+      - hadoop-net
+    ports:
+      - "9864:9864"
+    volumes:
+      - datanode1-data:/hadoop/dfs/data
+    environment:
+      HADOOP_ROLE: datanode
+    depends_on:
+      namenode:
+        condition: service_healthy
+    restart: unless-stopped
+
+  datanode2:
+    build:
+      context: ./docker/hadoop
+      dockerfile: Dockerfile
+    container_name: datanode2
+    hostname: datanode2
+    networks:
+      - hadoop-net
+    ports:
+      - "9865:9864"
+    volumes:
+      - datanode2-data:/hadoop/dfs/data
+    environment:
+      HADOOP_ROLE: datanode
+    depends_on:
+      namenode:
+        condition: service_healthy
+    restart: unless-stopped
+
+  hbase-master:
+    build:
+      context: ./docker/hbase
+      dockerfile: Dockerfile
+    container_name: hbase-master
+    hostname: hbase-master
+    networks:
+      - hadoop-net
+    ports:
+      - "16000:16000"
+      - "16010:16010"
+    volumes:
+      - hbase-data:/hbase/data
+    environment:
+      HBASE_ROLE: master
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      namenode:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:16010"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+
+  regionserver1:
+    build:
+      context: ./docker/hbase
+      dockerfile: Dockerfile
+    container_name: regionserver1
+    hostname: regionserver1
+    networks:
+      - hadoop-net
+    ports:
+      - "16020:16020"
+      - "16030:16030"
+    environment:
+      HBASE_ROLE: regionserver
+    depends_on:
+      hbase-master:
+        condition: service_healthy
+    restart: unless-stopped
+
+  regionserver2:
+    build:
+      context: ./docker/hbase
+      dockerfile: Dockerfile
+    container_name: regionserver2
+    hostname: regionserver2
+    networks:
+      - hadoop-net
+    ports:
+      - "16021:16020"
+      - "16031:16030"
+    environment:
+      HBASE_ROLE: regionserver
+    depends_on:
+      hbase-master:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: hbase-api
+    hostname: hbase-api
+    networks:
+      - hadoop-net
+    ports:
+      - "5000:5000"
+    environment:
+      HBASE_HOST: hbase-master
+      HBASE_PORT: 9090
+      FLASK_ENV: development
+    depends_on:
+      hbase-master:
+        condition: service_healthy
+    restart: unless-stopped

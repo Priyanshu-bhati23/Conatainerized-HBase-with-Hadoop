@@ -1,0 +1,3 @@
+FROM zookeeper:3.8.1
+
+EXPOSE 2181 2888 3888
